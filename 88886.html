@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>colonel1223 | AI Safety Research</title>
+    <meta name="description" content="AI safety researcher. Quantitative AGI risk assessment. Tokyo-based. Open for collaboration.">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Electrolize&family=Orbitron:wght@400;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --bg-black: #000000;
+            --bg-deep: #0a0a1a;
+            --neon-green: #39ff14;
+            --neon-cyan: #00ffff;
+            --neon-pink: #ff1493;
+            --neon-orange: #ff6600;
+            --text-white: #ffffff;
+            --text-gray: #808080;
+            --scanline: rgba(0, 255, 0, 0.02);
+        }
+        
+        body {
+            background: var(--bg-black);
+            color: var(--text-white);
+            font-family: 'Electrolize', sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* CRT Monitor effect background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(0, 255, 0, 0.03) 0px,
+                    transparent 1px,
+                    transparent 2px,
+                    rgba(0, 255, 0, 0.03) 3px
+                ),
+                repeating-linear-gradient(
+                    90deg,
+                    rgba(0, 255, 0, 0.03) 0px,
+                    transparent 1px,
+                    transparent 2px,
+                    rgba(0, 255, 0, 0.03) 3px
+                );
+            pointer-events: none;
+            z-index: 1;
+            animation: flicker 0.15s infinite;
+        }
+        
+        @keyframes flicker {
+            0% { opacity: 0.97; }
+            50% { opacity: 1; }
+            100% { opacity: 0.98; }
+        }
+        
+        /* Animated scanlines */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                transparent 50%,
+                rgba(0, 255, 0, 0.03) 51%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 2;
+            animation: scan 12s linear infinite;
+        }
+        
+        @keyframes scan {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(100%); }
+        }
+        
+        /* Glowing corner brackets */
+        .corner-brackets {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .bracket {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border: 2px solid var(--neon-green);
+            filter: drop-shadow(0 0 8px var(--neon-green));
+            animation: pulse-bracket 3s ease-in-out infinite;
+        }
+        
+        .bracket.tl {
+            top: 20px;
+            left: 20px;
+            border-right: none;
+            border-bottom: none;
+        }
+        
+        .bracket.tr {
+            top: 20px;
+            right: 20px;
+            border-left: none;
+            border-bottom: none;
+        }
+        
+        .bracket.bl {
+            bottom: 20px;
+            left: 20px;
+            border-right: none;
+            border-top: none;
+        }
+        
+        .bracket.br {
+            bottom: 20px;
+            right: 20px;
+            border-left: none;
+            border-top: none;
+        }
+        
+        @keyframes pulse-bracket {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.8; }
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 60px 20px;
+            position: relative;
+            z-index: 3;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+        }
+        
+        /* Glitch effect container */
+        .glitch-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 56px;
+            font-weight: 900;
+            color: var(--neon-green);
+            text-shadow: 
+                0 0 10px var(--neon-green),
+                0 0 20px var(--neon-green),
+                0 0 30px var(--neon-green);
+            letter-spacing: 8px;
+            margin-bottom: 15px;
+            animation: text-flicker 3s infinite;
+            position: relative;
+        }
+        
+        .logo::before,
+        .logo::after {
+            content: 'colonel1223';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .logo::before {
+            animation: glitch-1 2.5s infinite;
+            color: var(--neon-cyan);
+            z-index: -1;
+        }
+        
+        .logo::after {
+            animation: glitch-2 2.5s infinite;
+            color: var(--neon-pink);
+            z-index: -2;
+        }
+        
+        @keyframes glitch-1 {
+            0%, 90%, 100% {
+                transform: translate(0);
+                opacity: 0;
+            }
+            91% {
+                transform: translate(-3px, 2px);
+                opacity: 0.8;
+            }
+            92% {
+                transform: translate(3px, -2px);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes glitch-2 {
+            0%, 90%, 100% {
+                transform: translate(0);
+                opacity: 0;
+            }
+            91.5% {
+                transform: translate(3px, 2px);
+                opacity: 0.6;
+            }
+            92.5% {
+                transform: translate(-3px, -2px);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes text-flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+                text-shadow: 
+                    0 0 10px var(--neon-green),
+                    0 0 20px var(--neon-green),
+                    0 0 30px var(--neon-green);
+            }
+            20%, 24%, 55% {
+                text-shadow: none;
+            }
+        }
+        
+        .tagline {
+            color: var(--neon-orange);
+            font-size: 13px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+            text-shadow: 0 0 10px var(--neon-orange);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 400;
+        }
+        
+        .terminal-line {
+            color: var(--neon-green);
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 5px;
+            text-shadow: 0 0 5px var(--neon-green);
+        }
+        
+        .terminal-line::before {
+            content: '> ';
+            color: var(--neon-cyan);
+        }
+        
+        /* About section - terminal style */
+        .about {
+            background: rgba(0, 20, 0, 0.8);
+            border: 2px solid var(--neon-green);
+            padding: 20px;
+            margin: 30px 0;
+            font-size: 13px;
+            line-height: 1.9;
+            color: var(--neon-green);
+            box-shadow: 
+                0 0 10px rgba(57, 255, 20, 0.3),
+                inset 0 0 10px rgba(0, 0, 0, 0.5);
+            font-family: 'Courier New', monospace;
+            position: relative;
+        }
+        
+        .about::before {
+            content: '[ SYSTEM INFO ]';
+            position: absolute;
+            top: -12px;
+            left: 15px;
+            background: var(--bg-black);
+            padding: 0 10px;
+            color: var(--neon-cyan);
+            font-size: 11px;
+            text-shadow: 0 0 5px var(--neon-cyan);
+        }
+        
+        .about-line {
+            margin-bottom: 8px;
+        }
+        
+        .data-highlight {
+            color: var(--neon-cyan);
+            text-shadow: 0 0 5px var(--neon-cyan);
+            font-weight: bold;
+        }
+        
+        /* Links */
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 40px;
+        }
+        
+        .link-card {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid var(--neon-green);
+            padding: 18px 22px;
+            text-decoration: none;
+            color: var(--neon-green);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 0 10px rgba(57, 255, 20, 0.2),
+                inset 0 0 10px rgba(0, 0, 0, 0.8);
+        }
+        
+        .link-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%,
+                rgba(57, 255, 20, 0.1) 50%,
+                transparent 100%
+            );
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+        
+        .link-card:hover::before {
+            transform: translateX(100%);
+        }
+        
+        .link-card:hover {
+            border-color: var(--neon-cyan);
+            box-shadow: 
+                0 0 20px rgba(0, 255, 255, 0.5),
+                inset 0 0 10px rgba(0, 255, 255, 0.1);
+            transform: translateX(8px);
+        }
+        
+        .link-card.primary {
+            border-color: var(--neon-orange);
+            background: rgba(255, 102, 0, 0.05);
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 
+                    0 0 15px rgba(255, 102, 0, 0.4),
+                    inset 0 0 10px rgba(0, 0, 0, 0.8);
+            }
+            50% {
+                box-shadow: 
+                    0 0 30px rgba(255, 102, 0, 0.6),
+                    inset 0 0 15px rgba(255, 102, 0, 0.1);
+            }
+        }
+        
+        .link-card.primary:hover {
+            border-color: var(--neon-orange);
+        }
+        
+        .link-icon {
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-right: 18px;
+            flex-shrink: 0;
+            text-shadow: 0 0 10px currentColor;
+        }
+        
+        .link-content {
+            flex: 1;
+        }
+        
+        .link-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 4px;
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 8px currentColor;
+            letter-spacing: 1px;
+        }
+        
+        .link-desc {
+            font-size: 11px;
+            color: var(--text-gray);
+            font-family: 'Courier New', monospace;
+        }
+        
+        .link-arrow {
+            font-size: 24px;
+            margin-left: 15px;
+            transition: transform 0.3s;
+            text-shadow: 0 0 10px currentColor;
+        }
+        
+        .link-card:hover .link-arrow {
+            transform: translateX(8px);
+        }
+        
+        /* Footer - terminal style */
+        .footer {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 2px solid var(--neon-green);
+            font-size: 11px;
+            color: var(--neon-green);
+            font-family: 'Courier New', monospace;
+            box-shadow: 0 -2px 10px rgba(57, 255, 20, 0.2);
+        }
+        
+        .timestamp {
+            color: var(--neon-cyan);
+            margin-bottom: 12px;
+            text-shadow: 0 0 5px var(--neon-cyan);
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        
+        .timestamp::before {
+            content: '[ ';
+            color: var(--neon-green);
+        }
+        
+        .timestamp::after {
+            content: ' ]';
+            color: var(--neon-green);
+        }
+        
+        .japanese {
+            color: var(--neon-pink);
+            font-size: 13px;
+            letter-spacing: 4px;
+            margin: 12px 0;
+            text-shadow: 0 0 8px var(--neon-pink);
+        }
+        
+        .status {
+            margin-top: 15px;
+            color: var(--text-gray);
+            font-size: 10px;
+        }
+        
+        .status span {
+            color: var(--neon-green);
+            text-shadow: 0 0 5px var(--neon-green);
+        }
+        
+        /* VHS tracking effect */
+        @keyframes vhs {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-10px); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 600px) {
+            .bracket {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .bracket.tl, .bracket.tr { top: 10px; }
+            .bracket.bl, .bracket.br { bottom: 10px; }
+            .bracket.tl, .bracket.bl { left: 10px; }
+            .bracket.tr, .bracket.br { right: 10px; }
+            
+            .logo {
+                font-size: 38px;
+                letter-spacing: 4px;
+            }
+            
+            .tagline {
+                font-size: 11px;
+                letter-spacing: 2px;
+            }
+            
+            .about {
+                font-size: 12px;
+                padding: 15px;
+            }
+            
+            .link-card {
+                padding: 15px 18px;
+            }
+            
+            .link-title {
+                font-size: 14px;
+            }
+            
+            .link-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
+        }
+        
+        /* Loading animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .link-card {
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+        }
+        
+        .link-card:nth-child(1) { animation-delay: 0.1s; }
+        .link-card:nth-child(2) { animation-delay: 0.2s; }
+        .link-card:nth-child(3) { animation-delay: 0.3s; }
+        .link-card:nth-child(4) { animation-delay: 0.4s; }
+        .link-card:nth-child(5) { animation-delay: 0.5s; }
+        .link-card:nth-child(6) { animation-delay: 0.6s; }
+    </style>
+</head>
+<body>
+    <!-- Scanlines -->
+    <div class="scanlines"></div>
+    
+    <!-- Corner brackets -->
+    <div class="corner-brackets">
+        <div class="bracket tl"></div>
+        <div class="bracket tr"></div>
+        <div class="bracket bl"></div>
+        <div class="bracket br"></div>
+    </div>
+    
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="glitch-wrapper">
+                <h1 class="logo">colonel1223</h1>
+            </div>
+            <p class="tagline">AI SAFETY RESEARCH • TOKYO</p>
+            <div class="terminal-line">SYSTEM INITIALIZED</div>
+            <div class="terminal-line">ESTABLISHING CONNECTION...</div>
+            
+            <div class="about">
+                <div class="about-line">ROLE: Independent AI Safety Researcher</div>
+                <div class="about-line">FOCUS: Quantitative AGI existential risk assessment</div>
+                <div class="about-line">METHOD: Bayesian decomposition | Markov chain analysis</div>
+                <div class="about-line">──────────────────────────────────────</div>
+                <div class="about-line">FINDING_01: P(catastrophe|2030) = <span class="data-highlight">25.2%</span></div>
+                <div class="about-line">FINDING_02: Cognitive dissolution = <span class="data-highlight">84% by 2035</span></div>
+                <div class="about-line">STATUS: <span class="data-highlight">IRREVERSIBLE</span></div>
+                <div class="about-line">──────────────────────────────────────</div>
+                <div class="about-line">MODE: Open for collaboration | Peer review | Critique</div>
+            </div>
+        </div>
+        
+        <!-- Links -->
+        <div class="links">
+            <!-- Primary Research -->
+            <a href="https://github.com/colonel1223/transmutation-research" class="link-card primary" target="_blank">
+                <div class="link-icon">▶</div>
+                <div class="link-content">
+                    <div class="link-title">RESEARCH REPOSITORY</div>
+                    <div class="link-desc">Complete analysis • 19 citations • Interactive visualizations</div>
+                </div>
+                <div class="link-arrow">▶▶</div>
+            </a>
+            
+            <!-- GitHub -->
+            <a href="https://github.com/colonel1223" class="link-card" target="_blank">
+                <div class="link-icon">⌘</div>
+                <div class="link-content">
+                    <div class="link-title">GITHUB</div>
+                    <div class="link-desc">Open-source projects • Code repositories</div>
+                </div>
+                <div class="link-arrow">▶</div>
+            </a>
+            
+            <!-- LinkedIn -->
+            <a href="https://linkedin.com/in/YOUR_LINKEDIN" class="link-card" target="_blank">
+                <div class="link-icon">in</div>
+                <div class="link-content">
+                    <div class="link-title">LINKEDIN</div>
+                    <div class="link-desc">Professional network • Research updates</div>
+                </div>
+                <div class="link-arrow">▶</div>
+            </a>
+            
+            <!-- X/Twitter -->
+            <a href="https://x.com/YOUR_TWITTER" class="link-card" target="_blank">
+                <div class="link-icon">𝕏</div>
+                <div class="link-content">
+                    <div class="link-title">X (TWITTER)</div>
+                    <div class="link-desc">Real-time thoughts • Research threads</div>
+                </div>
+                <div class="link-arrow">▶</div>
+            </a>
+            
+            <!-- Discord -->
+            <a href="https://discord.gg/YOUR_DISCORD" class="link-card" target="_blank">
+                <div class="link-icon">💬</div>
+                <div class="link-content">
+                    <div class="link-title">DISCORD</div>
+                    <div class="link-desc">Community • Direct discussion</div>
+                </div>
+                <div class="link-arrow">▶</div>
+            </a>
+            
+            <!-- Email -->
+            <a href="mailto:your.email@example.com" class="link-card">
+                <div class="link-icon">✉</div>
+                <div class="link-content">
+                    <div class="link-title">EMAIL</div>
+                    <div class="link-desc">Collaboration • Media inquiries</div>
+                </div>
+                <div class="link-arrow">▶</div>
+            </a>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <div class="timestamp">SYNC: 2026.02.14 • 19:47:33 JST</div>
+            <div class="japanese">時間は限られています</div>
+            <div class="status">
+                <span>OPEN SOURCE</span> • <span>SELF-HOSTED</span> • <span>DATA SOVEREIGN</span>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Click tracking
+        document.querySelectorAll('.link-card').forEach(link => {
+            link.addEventListener('click', function() {
+                const title = this.querySelector('.link-title').textContent;
+                console.log('[LINK ACCESSED]', title, new Date().toISOString());
+            });
+        });
+        
+        // Update timestamp (JST)
+        function updateTimestamp() {
+            const now = new Date();
+            const jst = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Tokyo' }));
+            const formatted = `${jst.getFullYear()}.${String(jst.getMonth()+1).padStart(2,'0')}.${String(jst.getDate()).padStart(2,'0')} • ${String(jst.getHours()).padStart(2,'0')}:${String(jst.getMinutes()).padStart(2,'0')}:${String(jst.getSeconds()).padStart(2,'0')} JST`;
+            const el = document.querySelector('.timestamp');
+            if (el) el.textContent = `SYNC: ${formatted}`;
+        }
+        
+        updateTimestamp();
+        setInterval(updateTimestamp, 1000);
+    </script>
+</body>
+</html>
